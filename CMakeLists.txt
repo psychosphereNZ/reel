@@ -4,7 +4,6 @@ project(REEL15 VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# JUCE: lokalen Pfad nutzen (-DJUCE_PATH=...) oder automatisch von GitHub laden
 set(JUCE_PATH "" CACHE PATH "Optionaler Pfad zu einem lokalen JUCE-Checkout")
 if(JUCE_PATH)
     add_subdirectory(${JUCE_PATH} JUCE)
@@ -19,6 +18,7 @@ endif()
 
 juce_add_plugin(Reel15
     COMPANY_NAME             "G Audio"
+    BUNDLE_ID                com.gaudio.reel15
     PLUGIN_MANUFACTURER_CODE Gaud
     PLUGIN_CODE              Rel1
     FORMATS                  VST3 AU Standalone
@@ -31,9 +31,15 @@ juce_add_plugin(Reel15
     AU_MAIN_TYPE             kAudioUnitType_Effect
     COPY_PLUGIN_AFTER_BUILD  FALSE)
 
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/Source/PluginProcessor.cpp")
+    set(SRC_DIR Source)
+else()
+    set(SRC_DIR .)
+endif()
+
 target_sources(Reel15 PRIVATE
-    Source/PluginProcessor.cpp
-    Source/PluginEditor.cpp)
+    ${SRC_DIR}/PluginProcessor.cpp
+    ${SRC_DIR}/PluginEditor.cpp)
 
 target_compile_definitions(Reel15 PUBLIC
     JUCE_WEB_BROWSER=0
